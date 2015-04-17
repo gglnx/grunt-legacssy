@@ -76,6 +76,12 @@ module.exports = function(grunt) {
       var minw = queries[i].match( /\(\s*min\-width\s*:\s*(\s*[0-9\.]+)[^\d\)]*\s*\)/ ) && parseFloat( RegExp.$1 ), 
           maxw = queries[i].match( /\(\s*max\-width\s*:\s*(\s*[0-9\.]+)[^\d\)]*\s*\)/ ) && parseFloat( RegExp.$1 );
 
+      // Filter out all non-width/height media queries (e.g. device-pixel-ratio)
+      // See: https://github.com/scottjehl/Respond/commit/4ad42217bbc78be5fbfd10d77e74e15b7acf4d4b
+      if (queries[i].replace(/\(\s*m(in|ax)\-(height|width)\s*:\s*(\s*[0-9\.]+)(px|em)\s*\)/gi, '').match(/\([^\)]*\)/g)) {
+        continue;
+      }
+
       // If this does not match, move to the next
       if ((minw && minw > options.legacyWidth) ||
           (maxw && maxw < options.legacyWidth)) {
